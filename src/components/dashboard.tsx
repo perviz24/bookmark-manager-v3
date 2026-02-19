@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AddBookmarkForm, type NewBookmark } from "@/components/add-bookmark-form";
 import { BookmarkList } from "@/components/bookmark-list";
 import { TagFilter } from "@/components/tag-filter";
+import { SearchBar } from "@/components/search-bar";
 
 // SESSION NOTE: Local state for now. Replace with useQuery(api.bookmarks.list)
 // when Convex is configured. All child components receive bookmarks as props.
@@ -18,12 +19,20 @@ export interface BookmarkItem {
 export function Dashboard() {
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
   const [filterTag, setFilterTag] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [editingBookmark, setEditingBookmark] = useState<BookmarkItem | null>(null);
   const [deletingBookmark, setDeletingBookmark] = useState<BookmarkItem | null>(null);
 
-  const filteredBookmarks = filterTag
-    ? bookmarks.filter((b) => b.tags.includes(filterTag))
-    : bookmarks;
+  const filteredBookmarks = bookmarks.filter((b) => {
+    if (filterTag && !b.tags.includes(filterTag)) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return b.title.toLowerCase().includes(q) || b.url.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  const isFiltering = filterTag !== null || searchQuery !== "";
 
   function handleEditBookmark(bookmark: BookmarkItem) {
     setEditingBookmark(bookmark);
@@ -53,6 +62,8 @@ export function Dashboard() {
 
       <AddBookmarkForm onAdd={handleAddBookmark} />
 
+      <SearchBar value={searchQuery} onChange={setSearchQuery} />
+
       <TagFilter
         bookmarks={bookmarks}
         activeTag={filterTag}
@@ -61,6 +72,7 @@ export function Dashboard() {
 
       <BookmarkList
         bookmarks={filteredBookmarks}
+        isFiltering={isFiltering}
         onEdit={handleEditBookmark}
         onDelete={handleDeleteBookmark}
       />
