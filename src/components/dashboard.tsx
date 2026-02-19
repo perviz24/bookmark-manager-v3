@@ -5,6 +5,7 @@ import { AddBookmarkForm, type NewBookmark } from "@/components/add-bookmark-for
 import { BookmarkList } from "@/components/bookmark-list";
 import { TagFilter } from "@/components/tag-filter";
 import { SearchBar } from "@/components/search-bar";
+import { EditBookmarkDialog } from "@/components/edit-bookmark-dialog";
 
 // SESSION NOTE: Local state for now. Replace with useQuery(api.bookmarks.list)
 // when Convex is configured. All child components receive bookmarks as props.
@@ -42,6 +43,12 @@ export function Dashboard() {
     setDeletingBookmark(bookmark);
   }
 
+  function handleSaveEdit(id: string, data: { title: string; url: string; tags: string[] }) {
+    setBookmarks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, ...data } : b))
+    );
+  }
+
   function handleAddBookmark(newBookmark: NewBookmark) {
     const bookmark: BookmarkItem = {
       id: crypto.randomUUID(),
@@ -75,6 +82,12 @@ export function Dashboard() {
         isFiltering={isFiltering}
         onEdit={handleEditBookmark}
         onDelete={handleDeleteBookmark}
+      />
+
+      <EditBookmarkDialog
+        bookmark={editingBookmark}
+        onClose={() => setEditingBookmark(null)}
+        onSave={handleSaveEdit}
       />
     </div>
   );
