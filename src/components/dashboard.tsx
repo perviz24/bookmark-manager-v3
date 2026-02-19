@@ -1,8 +1,31 @@
 "use client";
 
-import { Bookmark } from "lucide-react";
+import { useState } from "react";
+import { Bookmark as BookmarkIcon } from "lucide-react";
+import { AddBookmarkForm, type NewBookmark } from "@/components/add-bookmark-form";
+
+// SESSION NOTE: Local state for now. Replace with useQuery(api.bookmarks.list)
+// when Convex is configured. All child components receive bookmarks as props.
+export interface BookmarkItem {
+  id: string;
+  title: string;
+  url: string;
+  tags: string[];
+  createdAt: number;
+}
 
 export function Dashboard() {
+  const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
+
+  function handleAddBookmark(newBookmark: NewBookmark) {
+    const bookmark: BookmarkItem = {
+      id: crypto.randomUUID(),
+      ...newBookmark,
+      createdAt: Date.now(),
+    };
+    setBookmarks((prev) => [bookmark, ...prev]);
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -12,16 +35,24 @@ export function Dashboard() {
         </p>
       </div>
 
-      {/* Placeholder — components added in upcoming features */}
-      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="rounded-full bg-muted p-3">
-          <Bookmark className="h-6 w-6 text-muted-foreground" />
+      <AddBookmarkForm onAdd={handleAddBookmark} />
+
+      {/* Bookmark list — Feature #3 will replace this empty state */}
+      {bookmarks.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+          <div className="rounded-full bg-muted p-3">
+            <BookmarkIcon className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <p className="font-medium">No bookmarks yet</p>
+          <p className="text-sm text-muted-foreground">
+            Add your first bookmark using the form above
+          </p>
         </div>
-        <p className="font-medium">No bookmarks yet</p>
+      ) : (
         <p className="text-sm text-muted-foreground">
-          Add your first bookmark using the form above
+          {bookmarks.length} bookmark{bookmarks.length !== 1 && "s"} saved
         </p>
-      </div>
+      )}
     </div>
   );
 }
