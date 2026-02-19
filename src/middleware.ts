@@ -1,9 +1,15 @@
-// Clerk middleware — protects routes
-// CRITICAL: Use clerkMiddleware(), NEVER authMiddleware() (deprecated)
+// SESSION NOTE: Clerk middleware is disabled until env vars are configured.
+// When NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY + CLERK_SECRET_KEY are set,
+// uncomment the clerkMiddleware import and export below.
 
-import { clerkMiddleware } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware()
+// import { clerkMiddleware } from "@clerk/nextjs/server"
+// export default clerkMiddleware()
+
+export default function middleware() {
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
@@ -12,4 +18,4 @@ export const config = {
     // Always run for API routes
     "/(api|trpc)(.*)",
   ],
-}
+};
