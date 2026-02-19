@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AddBookmarkForm, type NewBookmark } from "@/components/add-bookmark-form";
 import { BookmarkList } from "@/components/bookmark-list";
+import { TagFilter } from "@/components/tag-filter";
 
 // SESSION NOTE: Local state for now. Replace with useQuery(api.bookmarks.list)
 // when Convex is configured. All child components receive bookmarks as props.
@@ -16,8 +17,13 @@ export interface BookmarkItem {
 
 export function Dashboard() {
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
+  const [filterTag, setFilterTag] = useState<string | null>(null);
   const [editingBookmark, setEditingBookmark] = useState<BookmarkItem | null>(null);
   const [deletingBookmark, setDeletingBookmark] = useState<BookmarkItem | null>(null);
+
+  const filteredBookmarks = filterTag
+    ? bookmarks.filter((b) => b.tags.includes(filterTag))
+    : bookmarks;
 
   function handleEditBookmark(bookmark: BookmarkItem) {
     setEditingBookmark(bookmark);
@@ -47,8 +53,14 @@ export function Dashboard() {
 
       <AddBookmarkForm onAdd={handleAddBookmark} />
 
-      <BookmarkList
+      <TagFilter
         bookmarks={bookmarks}
+        activeTag={filterTag}
+        onTagSelect={setFilterTag}
+      />
+
+      <BookmarkList
+        bookmarks={filteredBookmarks}
         onEdit={handleEditBookmark}
         onDelete={handleDeleteBookmark}
       />
