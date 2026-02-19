@@ -63,16 +63,21 @@ export function EditBookmarkDialog({
             <Label htmlFor="edit-title">Title</Label>
             <Input
               id="edit-title"
+              name="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              autoComplete="off"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="edit-url">URL</Label>
             <Input
               id="edit-url"
+              name="url"
+              type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              autoComplete="off"
             />
           </div>
           <div className="space-y-2">

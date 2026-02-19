@@ -48,18 +48,23 @@ export function AddBookmarkForm({ onAdd }: AddBookmarkFormProps) {
               <Label htmlFor="title">Title</Label>
               <Input
                 id="title"
+                name="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="React Documentation"
+                placeholder="React Documentation…"
+                autoComplete="off"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="url">URL</Label>
               <Input
                 id="url"
+                name="url"
+                type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://react.dev"
+                placeholder="https://react.dev…"
+                autoComplete="off"
               />
             </div>
           </div>
